@@ -160,11 +160,11 @@ class FXOS(object):
 
     def update_app(self, data):
         request = '/app'
-        return self._patch(request)
+        return self._patch(request, data)
 
     def delete_app(self, data):
         request = '/app'
-        return self._delete(request)
+        return self._delete(request, data)
 
     def get_app_instance(self, slot_id=None, app_id=None):
         request = '?classId=smAppInstance' if app_id is None else '/slot/{0}/app-inst/{1}'.format(slot_id, app_id)
@@ -172,7 +172,7 @@ class FXOS(object):
 
     def update_app_instance(self, slot_id, app_id, data):
         request = '/slot/{0}/app-inst/{1}'.format(slot_id, app_id)
-        return self._patch(request)
+        return self._patch(request, data)
 
     def delete_app_instance(self, slot_id, app_id):
         request = '/slot/{0}/app-inst/{1}'.format(slot_id, app_id)
@@ -180,7 +180,7 @@ class FXOS(object):
 
     def download_app(self, data):
         request = '/sys/app-catalogue'
-        return self._post(request)
+        return self._post(request, data)
 
     def get_logical_device(self, id=None):
         request = '/ld' if id is None else '/ld/{0}'.format(id)
@@ -275,14 +275,14 @@ class FXOS(object):
         request = '/sys/svc-ext/snmp-svc'
         self._patch(request, data)
 
-    def get_snmp_trap_host(self, data, id=None):
+    def get_snmp_trap_host(self, id=None):
         request = '/sys/service/snmp-svc/snmp-trap' if id is None else '/sys/service/snmp-svc/snmp-trap/{0}' \
             .format(id)
         self._get(request)
 
     def update_snmp_trap_host(self, data):
         request = '/api/sys/service/snmp-svc/snmp-trap'
-        self._patch(request)
+        self._patch(request, data)
 
     def get_dns_server(self, id=None):
         request = '/sys/service/dns-svc/dns' if id is None else '/sys/service/dns-svc/dns/{0}'.format(id)
@@ -290,11 +290,11 @@ class FXOS(object):
 
     def set_dns_server(self, data):
         request = '/sys/service/dns-svc/dns'
-        self._post(request)
+        self._post(request, data)
 
     def update_dns_server(self, data):
         request = '/sys/service/dns-svc/dns'
-        self._patch(request)
+        self._patch(request, data)
 
     def delete_dns_server(self, id):
         request = '/sys/service/dns-svc/dns/{0}'.join(id)
@@ -308,17 +308,25 @@ class FXOS(object):
         request = '/sys/service/syslog-svc'
         self._update(request, data)
 
-    def update_syslog_server_primary(self, data):
+    def get_syslog_servcer_primary(self):
         request = 'sys/svc-ext/syslog/client-primary'
-        self._update(request, data)
+        self._get(request)
 
     def update_syslog_server_primary(self, data):
         request = 'sys/svc-ext/syslog/client-primary'
         self._update(request, data)
+
+    def get_syslog_server_secondary(self, data):
+        request = 'sys/svc-ext/syslog/client-secondary'
+        self._get(request, data)
 
     def update_syslog_server_secondary(self, data):
         request = 'sys/svc-ext/syslog/client-secondary'
         self._update(request, data)
+
+    def get_syslog_server_tertiary(self, data):
+        request = 'sys/svc-ext/syslog/client-tertiary'
+        self._get(request, data)
 
     def update_syslog_server_tertiary(self, data):
         request = 'sys/svc-ext/syslog/client-tertiary'
