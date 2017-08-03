@@ -51,7 +51,7 @@ class FXOS(object):
             logger.addHandler(handler)
             logger.setLevel(loglevel)
             return logger
-        return self.logger
+        return logger
 
     def _login(self):
         try:
