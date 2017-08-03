@@ -265,69 +265,69 @@ class FXOS(object):
 
     def update_ntp_server(self, data, id=None):
         request = '/sys/service/datetime-svc/ntp' if id is None else '/sys/service/datetime-svc/ntp/{0}'.format(id)
-        self._patch(request, data)
+        return self._patch(request, data)
 
     def get_snmp_svc(self):
         request = '/sys/svc-ext/snmp-svc'
-        self._get(request)
+        return self._get(request)
 
     def update_snmp_svc(self, data):
         request = '/sys/svc-ext/snmp-svc'
-        self._patch(request, data)
+        return self._patch(request, data)
 
     def get_snmp_trap_host(self, id=None):
         request = '/sys/service/snmp-svc/snmp-trap' if id is None else '/sys/service/snmp-svc/snmp-trap/{0}' \
             .format(id)
-        self._get(request)
+        return self._get(request)
 
     def update_snmp_trap_host(self, data):
         request = '/api/sys/service/snmp-svc/snmp-trap'
-        self._patch(request, data)
+        return self._patch(request, data)
 
     def get_dns_server(self, id=None):
         request = '/sys/service/dns-svc/dns' if id is None else '/sys/service/dns-svc/dns/{0}'.format(id)
-        self._get(request)
+        return self._get(request)
 
     def set_dns_server(self, data):
         request = '/sys/service/dns-svc/dns'
-        self._post(request, data)
+        return self._post(request, data)
 
     def update_dns_server(self, data):
         request = '/sys/service/dns-svc/dns'
-        self._patch(request, data)
+        return self._patch(request, data)
 
     def delete_dns_server(self, id):
         request = '/sys/service/dns-svc/dns/{0}'.join(id)
-        self._delete(request)
+        return self._delete(request)
 
     def get_syslog_svc(self):
         request = '/sys/service/syslog-svc'
-        self._get(request)
+        return self._get(request)
 
     def update_syslog_svc(self, data):
         request = '/sys/service/syslog-svc'
-        self._update(request, data)
+        return self._update(request, data)
 
     def get_syslog_servcer_primary(self):
         request = 'sys/svc-ext/syslog/client-primary'
-        self._get(request)
+        return self._get(request)
 
     def update_syslog_server_primary(self, data):
         request = 'sys/svc-ext/syslog/client-primary'
-        self._update(request, data)
+        return self._update(request, data)
 
     def get_syslog_server_secondary(self, data):
         request = 'sys/svc-ext/syslog/client-secondary'
-        self._get(request, data)
+        return self._get(request, data)
 
     def update_syslog_server_secondary(self, data):
         request = 'sys/svc-ext/syslog/client-secondary'
-        self._update(request, data)
+        return self._update(request, data)
 
     def get_syslog_server_tertiary(self, data):
         request = 'sys/svc-ext/syslog/client-tertiary'
-        self._get(request, data)
+        return self._get(request, data)
 
     def update_syslog_server_tertiary(self, data):
         request = 'sys/svc-ext/syslog/client-tertiary'
-        self._update(request, data)
+        return self._update(request, data)
