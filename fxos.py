@@ -120,7 +120,7 @@ class FXOS(object):
         try:
             if response.status_code > 399:
                 raise apiException('Request {0} failed with response code {1}. Eror message: {2}'
-                                   .format(response.request, response.status_code, response.text))
+                                   .format(response.request, response.status_code, response.reason))
         except apiException as exc:
             self.logger.error(exc.message)
         finally:
@@ -232,7 +232,7 @@ class FXOS(object):
         return self._get(request)
 
     def get_mgmt_ip(self):
-        request = '/api/sys/mgmt-ipv4'
+        request = '/sys/mgmt-ipv4'
         return self._get(request)
 
     def update_mgmt_ip(self, data):
