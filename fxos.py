@@ -6,7 +6,6 @@ import copy
 
 from rainbow_logging_handler import RainbowLoggingHandler
 from requests.exceptions import ConnectionError
-from pprint import pprint
 
 requests.packages.urllib3.disable_warnings()
 
