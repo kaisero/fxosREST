@@ -16,7 +16,7 @@ HEADERS = {
 }
 
 
-class apiException(Exception):
+class ApiException(Exception):
     pass
 
 
@@ -62,17 +62,17 @@ class FXOS(object):
             response = requests.post(request_url, headers=request_headers, verify=self.verify_cert)
             payload = response.json()
             if 'token' not in payload:
-                raise apiException('Could not retrieve token from {0}.'.format(request_url))
+                raise ApiException('Could not retrieve token from {0}.'.format(request_url))
             if response.status_code == 400:
                 if '551' in response.content:
-                    raise apiException('FX-OS API Authentication to {0} failed.'.format(self.hostname))
+                    raise ApiException('FX-OS API Authentication to {0} failed.'.format(self.hostname))
                 if '552' in response.content:
-                    raise apiException('FX-OS API Authorization to {0} failed'.format(self.hostname))
+                    raise ApiException('FX-OS API Authorization to {0} failed'.format(self.hostname))
             return payload['token']
         except ConnectionError as exc:
             self.logger.error(
                 'Could not connect to {0}. Max retries exceeded with url: {1}'.format(self.hostname, request_url))
-        except apiException as exc:
+        except ApiException as exc:
             self.logger.error(exc.message)
         except Exception as exc:
             self.logger.debug(exc.message)
@@ -119,9 +119,9 @@ class FXOS(object):
     def _validate(self, response):
         try:
             if response.status_code > 399:
-                raise apiException('Request {0} failed with response code {1}. Eror message: {2}'
+                raise ApiException('Request {0} failed with response code {1}. Eror message: {2}'
                                    .format(response.request, response.status_code, response.reason))
-        except apiException as exc:
+        except ApiException as exc:
             self.logger.error(exc.message)
         finally:
             return response
@@ -266,6 +266,10 @@ class FXOS(object):
     def update_ntp_server(self, data, id=None):
         request = '/sys/service/datetime-svc/ntp' if id is None else '/sys/service/datetime-svc/ntp/{0}'.format(id)
         return self._patch(request, data)
+
+    def delete_ntp_server(self, id):
+        request = '/sys/service/datetime-svc/ntp/{0}'.format(id)
+        return self._delete(request)
 
     def get_snmp_svc(self):
         request = '/sys/svc-ext/snmp-svc'
