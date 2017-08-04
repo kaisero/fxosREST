@@ -292,12 +292,8 @@ class FXOS(object):
         request = '/sys/service/dns-svc/dns'
         return self._post(request, data)
 
-    def update_dns_server(self, data):
-        request = '/sys/service/dns-svc/dns'
-        return self._patch(request, data)
-
     def delete_dns_server(self, id):
-        request = '/sys/service/dns-svc/dns/{0}'.join(id)
+        request = '/sys/service/dns-svc/dns/{0}'.format(id)
         return self._delete(request)
 
     def get_syslog_svc(self):
