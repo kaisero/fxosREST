@@ -272,11 +272,11 @@ class FXOS(object):
         return self._delete(request)
 
     def get_snmp_svc(self):
-        request = '/sys/svc-ext/snmp-svc'
+        request = '/sys/service/snmp-svc'
         return self._get(request)
 
     def update_snmp_svc(self, data):
-        request = '/sys/svc-ext/snmp-svc'
+        request = '/sys/service/snmp-svc'
         return self._patch(request, data)
 
     def get_snmp_trap_host(self, id=None):
@@ -287,6 +287,10 @@ class FXOS(object):
     def update_snmp_trap_host(self, data):
         request = '/api/sys/service/snmp-svc/snmp-trap'
         return self._patch(request, data)
+
+    def delete_snmp_trap_host(self, id):
+        request = '/api/sys/service/snmp-svc/snmp-trap/{0}'.format(id)
+        return self._delete(request)
 
     def get_dns_server(self, id=None):
         request = '/sys/service/dns-svc/dns' if id is None else '/sys/service/dns-svc/dns/{0}'.format(id)
