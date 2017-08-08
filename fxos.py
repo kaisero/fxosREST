@@ -310,7 +310,7 @@ class FXOS(object):
 
     def update_syslog_svc(self, data):
         request = '/sys/service/syslog-svc'
-        return self._update(request, data)
+        return self._patch(request, data)
 
     def get_syslog_servcer_primary(self):
         request = 'sys/svc-ext/syslog/client-primary'
@@ -318,7 +318,7 @@ class FXOS(object):
 
     def update_syslog_server_primary(self, data):
         request = 'sys/svc-ext/syslog/client-primary'
-        return self._update(request, data)
+        return self._patch(request, data)
 
     def get_syslog_server_secondary(self, data):
         request = 'sys/svc-ext/syslog/client-secondary'
@@ -326,7 +326,7 @@ class FXOS(object):
 
     def update_syslog_server_secondary(self, data):
         request = 'sys/svc-ext/syslog/client-secondary'
-        return self._update(request, data)
+        return self._patch(request, data)
 
     def get_syslog_server_tertiary(self, data):
         request = 'sys/svc-ext/syslog/client-tertiary'
@@ -334,4 +334,4 @@ class FXOS(object):
 
     def update_syslog_server_tertiary(self, data):
         request = 'sys/svc-ext/syslog/client-tertiary'
-        return self._update(request, data)
+        return self._patch(request, data)
