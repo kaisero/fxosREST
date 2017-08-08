@@ -194,6 +194,38 @@ class FXOS(object):
         request = '/ld/{0}'.format(id)
         return self._delete(request)
 
+    def get_firmware_packages(self, id=None):
+        request = '/sys/firmware/distrib' if id is None else '/sys/firmware/distrib/{0}'.format(id)
+        return self._get(request)
+
+    def get_firmware_kernel(self):
+        request = '/sys/firmware/version/kernel'
+        return self._get(request)
+
+    def get_firmware_system(self):
+        request = '/sys/firmware/version/system'
+        return self._get(request)
+
+    def get_firmware_path(self):
+        # TODO: enhance to support different upgrade paths
+        upgrade_path = ['1.1.4', '2.0.1.135', '2.1.1.64', '2.2.1.63', '2.2.1.70'] #
+        return upgrade_path
+
+    def get_firmware_next(self, current_version):
+        upgrade_path = self.get_firmware_path()
+        for k, v in enumerate(upgrade_path):
+            try:
+                if current_version == v:
+                    return upgrade_path[k + 1]
+            except IndexError as exc:
+                pass
+                return None
+        return None
+
+    def get_firmware_chassis_manager(self):
+        request = '/sys/firmware/version/chassis-manager'
+        return self._get(request)
+
     def download_infrastructure_bundle(self, data):
         request = '/platformDownloader/{0}'.format(data['firmwareDownloader']['fileName'])
         return self._post(request)
