@@ -208,31 +208,40 @@ class FXOS(object):
 
     def get_firmware_path(self):
         # TODO: enhance to support different upgrade paths
-        upgrade_path = ['1.1.4', '2.0.1.135', '2.1.1.64', '2.2.1.63', '2.2.1.70'] #
+        upgrade_path = ['1.1.4', '2.0.1.135', '2.1.1.64', '2.2.1.63', '2.2.1.70']
         return upgrade_path
 
-    def get_firmware_next(self, current_version):
+    def get_firmware_path_for(self, current_version, new_version):
+        upgrade_path_for = list()
         upgrade_path = self.get_firmware_path()
-        for k, v in enumerate(upgrade_path):
-            try:
-                if current_version == v:
-                    return upgrade_path[k + 1]
-            except IndexError as exc:
-                pass
-                return None
-        return None
+        if current_version == new_version:
+            return upgrade_path_for
+        for item in upgrade_path:
+            if current_version <= item <= new_version:
+                upgrade_path_for.append(item)
+        return upgrade_path_for
 
     def get_firmware_chassis_manager(self):
         request = '/sys/firmware/version/chassis-manager'
         return self._get(request)
 
-    def download_infrastructure_bundle(self, data):
-        request = '/platformDownloader/{0}'.format(data['firmwareDownloader']['fileName'])
-        return self._post(request)
+    def set_download_infrastructure_bundle(self, data):
+        request = '/sys/firmware/dnld/{0}'.format(data['firmwareDownloader'][0]['fileName'])
+        return self._post(request, data)
 
-    def status_download_infrastructure_bundle(self, id):
-        request = '/platformDownloader/{0}'.format(id)
+    def update_download_infrastructure_bundle(self, data, overwrite=False):
+        request = '/sys/firmware/dnld/{0}'.format(data['firmwareDownloader'][0]['fileName'])
+        if overwrite:
+            return self._put(request, data)
+        return self._update(request, data)
+
+    def get_download_infrastructure_bundle(self, id):
+        request = '/sys/firmware/dnld/{0}'.format(id)
         return self._get(request)
+
+    def delete_download_infrastructure_bundle(self, id):
+        request = '/sys/firmware/dnld/{0}'.format(id)
+        return self._delete(request)
 
     def get_infrastructure_bundle(self, id=None):
         request = '/sys/firmware/distrib' if id is None else '/sys/firmware/distrib/{0}'.format(id)
