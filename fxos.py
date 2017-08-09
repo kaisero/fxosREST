@@ -6,6 +6,8 @@ import copy
 
 from rainbow_logging_handler import RainbowLoggingHandler
 from requests.exceptions import ConnectionError
+from distutils.version import LooseVersion
+
 
 requests.packages.urllib3.disable_warnings()
 
@@ -217,7 +219,7 @@ class FXOS(object):
         if current_version == new_version:
             return upgrade_path_for
         for item in upgrade_path:
-            if current_version <= item <= new_version:
+            if LooseVersion(current_version) <= LooseVersion(item) <= LooseVersion(new_version):
                 upgrade_path_for.append(item)
         return upgrade_path_for
 
@@ -254,6 +256,10 @@ class FXOS(object):
     def validate_infrastracture_bundle(self, id=None):
         request = '/sys/firmware/validate-platform-fw' if id is None else '/sys/firmware/validate-platform-fw/{0}' \
             .format(id)
+        return self._get(request)
+
+    def get_schedule_infrastructure_bundle(self):
+        request = '/sys/firmware/sched-platform-fw'
         return self._get(request)
 
     def schedule_infrastructure_bundle(self, data):
