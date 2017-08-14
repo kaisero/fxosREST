@@ -8,7 +8,6 @@ from rainbow_logging_handler import RainbowLoggingHandler
 from requests.exceptions import ConnectionError
 from distutils.version import LooseVersion
 
-
 requests.packages.urllib3.disable_warnings()
 
 HEADERS = {
@@ -18,7 +17,11 @@ HEADERS = {
 }
 
 
-class ApiException(Exception):
+class FXOSApiException(Exception):
+    pass
+
+
+class FXOSAuthException(Exception):
     pass
 
 
@@ -35,7 +38,7 @@ class FXOS(object):
         self.auth_url = auth_url
         self.verify_cert = verify_cert
         self.timeout = timeout
-        self.headers = HEADERS
+        self.headers = copy.copy(HEADERS)
         self.headers['token'] = self._login()
 
     def _get_logger(self, logger, loglevel):
@@ -64,20 +67,20 @@ class FXOS(object):
             response = requests.post(request_url, headers=request_headers, verify=self.verify_cert)
             payload = response.json()
             if 'token' not in payload:
-                raise ApiException('Could not retrieve token from {0}.'.format(request_url))
+                raise FXOSApiException('Could not retrieve token from {0}.'.format(request_url))
             if response.status_code == 400:
                 if '551' in response.content:
-                    raise ApiException('FX-OS API Authentication to {0} failed.'.format(self.hostname))
+                    raise FXOSAuthException('FX-OS API Authentication to {0} failed.'.format(self.hostname))
                 if '552' in response.content:
-                    raise ApiException('FX-OS API Authorization to {0} failed'.format(self.hostname))
+                    raise FXOSAuthException('FX-OS API Authorization to {0} failed'.format(self.hostname))
             return payload['token']
         except ConnectionError as exc:
             self.logger.error(
                 'Could not connect to {0}. Max retries exceeded with url: {1}'.format(self.hostname, request_url))
-        except ApiException as exc:
+        except FXOSApiException as exc:
             self.logger.error(exc.message)
         except Exception as exc:
-            self.logger.debug(exc.message)
+            self.logger.exception(exc.message)
 
     def _url(self):
         return '{0}://{1}{2}'.format(self.protocol, self.hostname, self.base_url)
@@ -120,10 +123,19 @@ class FXOS(object):
 
     def _validate(self, response):
         try:
-            if response.status_code > 399:
-                raise ApiException('Request {0} failed with response code {1}. Eror message: {2}'
-                                   .format(response.request, response.status_code, response.reason))
-        except ApiException as exc:
+            if response.status_code == 400:
+                if '552' in response.content:
+                    raise FXOSAuthException('FX-OS API Authorization to {0} failed'.format(self.hostname))
+                if '101' in response.content:
+                    raise FXOSApiException(
+                        'Request {0} failed. Error communicating with FX-OS API backend.'.format(response.request))
+                raise FXOSApiException('Request {0} failed with response code {1}. Eror message: {2}\nDetails: {3}'
+                                       .format(response.url, response.status_code, response.reason,
+                                               response.content))
+        except FXOSAuthException as exc:
+            self.headers['token'] = self._login()
+            self.logger.error(exc.message)
+        except FXOSApiException as exc:
             self.logger.error(exc.message)
         finally:
             return response
@@ -219,7 +231,7 @@ class FXOS(object):
         if current_version == new_version:
             return upgrade_path_for
         for item in upgrade_path:
-            if LooseVersion(current_version) <= LooseVersion(item) <= LooseVersion(new_version):
+            if LooseVersion(current_version) < LooseVersion(item) <= LooseVersion(new_version):
                 upgrade_path_for.append(item)
         return upgrade_path_for
 
@@ -274,8 +286,8 @@ class FXOS(object):
         request = '/sys/firmware/cancel-platform-fw'
         return self._patch(request, data)
 
-    def status_install_infrastructure_bundle(self):
-        request = '/sys/firmware/sched-platform-fw'
+    def get_install_infrastructure_bundle(self):
+        request = '/sys/fw-system/fsm'
         return self._get(request)
 
     def get_mgmt_ip(self):
