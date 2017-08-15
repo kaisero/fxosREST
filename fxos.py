@@ -192,9 +192,19 @@ class FXOS(object):
         request = '/slot/{0}/app-inst/{1}'.format(slot_id, app_id)
         return self._delete(request)
 
-    def download_app(self, data):
+    def set_download_app(self, data):
         request = '/sys/app-catalogue'
         return self._post(request, data)
+
+    def update_download_app(self, data, overwrite=False):
+        request = '/sys/app-catalogue'
+        if overwrite:
+            return self._put(request, data)
+        return self._patch(request, data)
+
+    def get_download_app(self):
+        request = '/sys/app-catalogue'
+        return self._get(request)
 
     def get_logical_device(self, id=None):
         request = '/ld' if id is None else '/ld/{0}'.format(id)
