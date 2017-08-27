@@ -1,10 +1,8 @@
 import json
 import requests
 import logging
-import sys
 import copy
 
-from rainbow_logging_handler import RainbowLoggingHandler
 from requests.exceptions import ConnectionError
 from distutils.version import LooseVersion
 
@@ -27,9 +25,9 @@ class FXOSAuthException(Exception):
 
 class FXOS(object):
     def __init__(self, hostname, username, password, protocol='https', base_url='/api', auth_url='/login', logger=None,
-                 loglevel=logging.INFO, verify_cert=False, timeout=30):
+                 verify_cert=False, timeout=30):
 
-        self.logger = self._get_logger(logger, loglevel)
+        self.logger = logger
         self.hostname = hostname
         self.username = username
         self.password = password
@@ -40,23 +38,6 @@ class FXOS(object):
         self.timeout = timeout
         self.headers = copy.copy(HEADERS)
         self.headers['token'] = self._login()
-
-    def _get_logger(self, logger, loglevel):
-        """
-        Get a (new) logger instance
-        :param loglevel: desired loglevel
-        :return: logger instance
-        """
-        if logger is None:
-            logger = logging.getLogger(__name__)
-            handler = RainbowLoggingHandler(sys.stderr, color_funcName=('black', 'yellow', True))
-            formatter = logging.Formatter('[%(asctime)s] (%(levelname)s) [%(name)s] %(message)s')
-
-            handler.setFormatter(formatter)
-            logger.addHandler(handler)
-            logger.setLevel(loglevel)
-            return logger
-        return logger
 
     def _login(self):
         try:
