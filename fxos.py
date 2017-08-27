@@ -1,6 +1,5 @@
 import json
 import requests
-import logging
 import copy
 
 from requests.exceptions import ConnectionError
@@ -11,7 +10,7 @@ requests.packages.urllib3.disable_warnings()
 HEADERS = {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
-    'User-Agent': 'pyfxos'
+    'User-Agent': 'fxosREST'
 }
 
 
@@ -55,7 +54,7 @@ class FXOS(object):
                 if '552' in response.content:
                     raise FXOSAuthException('FX-OS API Authorization to {0} failed'.format(self.hostname))
             return payload['token']
-        except ConnectionError as exc:
+        except ConnectionError:
             self.logger.error(
                 'Could not connect to {0}. Max retries exceeded with url: {1}'.format(self.hostname, request_url))
         except FXOSApiException as exc:
