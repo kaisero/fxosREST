@@ -125,6 +125,10 @@ class FXOS(object):
         request = '/ports/ep' if id is None else '/ports/ep/{0}'.format(id.replace('/', '_API_SLASH_'))
         return self._get(request)
 
+    def update_physical_interface(self, data):
+        request = '/ports/ep'
+        return self._patch(request, data)
+
     def get_portchannel_interface(self, id=None):
         request = '/ports/pc' if id is None else '/ports/pc/{0}'.format(id)
         return self._get(request)
